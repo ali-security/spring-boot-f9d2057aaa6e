@@ -41,6 +41,8 @@ import org.apache.jasper.servlet.JspServlet;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.mockito.InOrder;
 
 import org.springframework.boot.testsupport.web.servlet.ExampleServlet;
@@ -258,6 +260,9 @@ class UndertowServletWebServerFactoryTests extends AbstractServletWebServerFacto
 	}
 
 	@Test
+	// Current JDK 11 updates list the TLS_RSA_* cipher suites in jdk.tls.disabledAlgorithms,
+	// so the handshake with TLS_RSA_WITH_AES_128_CBC_SHA256 is refused by the JDK itself.
+	@DisabledOnJre(JRE.JAVA_11)
 	void sslRestrictedProtocolsRSATLS12Success() throws Exception {
 		testRestrictedSSLProtocolsAndCipherSuites(new String[] { "TLSv1.2" },
 				new String[] { "TLS_RSA_WITH_AES_128_CBC_SHA256" });
